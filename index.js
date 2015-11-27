@@ -14,6 +14,7 @@ function install(options) {
   jstransform.transform('', options);
 
   require.extensions[options.extension || '.js'] = function(module, filename) {
+    // console.log("filename", filename, process.cwd());
     if (!options.hasOwnProperty("react"))
       options.react = true;
 
@@ -21,8 +22,15 @@ function install(options) {
     if (typeof options.additionalTransform == 'function') {
       src = options.additionalTransform(src);
     }
-    try {
-      src = jstransform.transform(src, options).code;
+    try {      
+      if (options.only) {
+        var t = RegExp('^' + process.cwd() + '/' + options.only);
+        if (t.test(filename)) {          
+          src = jstransform.transform(src, options).code;
+        }
+      } else {
+        src = jstransform.transform(src, options).code;
+      }
     } catch (e) {
       throw new Error('Error transforming ' + filename + ' to JS: ' + e.toString());
     }
