@@ -2,7 +2,7 @@ var fs = require('fs');
 var jstransform = require('jstransform/simple');
 
 var installed = false;
-
+var path = require('path');
 function install(options) {
   if (installed) {
     return;
@@ -24,8 +24,8 @@ function install(options) {
     }
     try {      
       if (options.only) {
-        var t = RegExp('^' + process.cwd() + '/' + options.only);
-        if (t.test(filename)) {          
+        var r = path.join(process.cwd(), options.only);
+        if (filename.indexOf(r) >= 0) {          
           src = jstransform.transform(src, options).code;
         }
       } else {
